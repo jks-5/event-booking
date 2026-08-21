@@ -1,61 +1,32 @@
-package com.example.eventbooking.model;
+package com.example.eventbooking.dto;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-@Entity
-@Table(name = "events")
-public class Event {
+public class CreateEventRequest {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(nullable = false)
+    @NotBlank
     private String title;
-    @ManyToOne
-    @JoinColumn(name = "creator_id")
-    private User createdBy;
+    //private User createdBy;
     private String description;
-    @Column(nullable = false)
+    @NotBlank
     private String location;
-    @Column(nullable = false)
+    @NotNull
+    @Positive
     private Integer maxParticipants;
-    @Column(nullable = false)
+    @NotNull
     private OffsetDateTime startTime;
-    @Column(nullable = false)
+    @NotNull
     private OffsetDateTime endTime;
-    @Column(nullable = false)
+    @NotNull
     private OffsetDateTime registrationStart;
-    @Column(nullable = false)
+    @NotNull
     private OffsetDateTime registrationEnd;
 
-    @OneToMany(mappedBy = "event")
-    private List<Booking> eventBookings = new ArrayList<>();
-
-    protected Event() {
-
-    }
-
-    public Event(String title, String description, String location, Integer maxParticipants, OffsetDateTime startTime, OffsetDateTime endTime, OffsetDateTime registrationStart, OffsetDateTime registrationEnd) {
-        setTitle(title);
-        setDescription(description);
-        setLocation(location);
-        setMaxParticipants(maxParticipants);
-        setStartTime(startTime);
-        setEndTime(endTime);
-        setRegistrationStart(registrationStart);
-        setRegistrationEnd(registrationEnd);
-    }
-
-
-    public Long getId() {
-        return id;
+    CreateEventRequest() {
     }
 
     public String getTitle() {
@@ -64,14 +35,6 @@ public class Event {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public User getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(User createdBy) {
-        this.createdBy = createdBy;
     }
 
     public String getDescription() {
@@ -90,11 +53,11 @@ public class Event {
         this.location = location;
     }
 
-    public int getMaxParticipants() {
+    public Integer getMaxParticipants() {
         return maxParticipants;
     }
 
-    public void setMaxParticipants(int maxParticipants) {
+    public void setMaxParticipants(Integer maxParticipants) {
         this.maxParticipants = maxParticipants;
     }
 
@@ -128,13 +91,5 @@ public class Event {
 
     public void setRegistrationEnd(OffsetDateTime registrationEnd) {
         this.registrationEnd = registrationEnd;
-    }
-
-    public List<Booking> getEventBookings() {
-        return eventBookings;
-    }
-
-    public void setEventBookings(List<Booking> eventBookings) {
-        this.eventBookings = eventBookings;
     }
 }
