@@ -2,10 +2,11 @@ package com.example.eventbooking.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -16,17 +17,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true, nullable = false)
-    @NotBlank
     @Email
     private String email;
-    @NotBlank
+    @Column(nullable = false)
     private String password;
-    @NotBlank
+    @Column(nullable = false)
     private String firstName;
-    @NotBlank
+    @Column(nullable = false)
     private String lastName;
     @Enumerated(EnumType.STRING)
-    @NotNull
+    @Column(nullable = false)
     private Role role;
 
     @OneToMany(mappedBy = "user")
@@ -37,6 +37,14 @@ public class User {
 
     protected User() {
 
+    }
+
+    public User(String email, String password, String firstName, String lastName) {
+        setEmail(email);
+        setPassword(password);
+        setFirstName(firstName);
+        setLastName(lastName);
+        setRole(Role.USER);
     }
 
     public enum Role {USER, ORGANIZER, ADMIN}

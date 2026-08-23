@@ -32,8 +32,8 @@ public class EventResponse {
         return title;
     }
 
-    public User getCreatedBy() {
-        return createdBy;
+    public Long getCreatedBy() {
+        return createdBy.getId();
     }
 
     public String getDescription() {

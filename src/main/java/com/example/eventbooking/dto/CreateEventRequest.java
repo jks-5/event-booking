@@ -1,5 +1,6 @@
 package com.example.eventbooking.dto;
 
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -10,7 +11,6 @@ public class CreateEventRequest {
 
     @NotBlank
     private String title;
-    //private User createdBy;
     private String description;
     @NotBlank
     private String location;
@@ -18,6 +18,7 @@ public class CreateEventRequest {
     @Positive
     private Integer maxParticipants;
     @NotNull
+    @Future
     private OffsetDateTime startTime;
     @NotNull
     private OffsetDateTime endTime;
