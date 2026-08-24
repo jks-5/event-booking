@@ -18,8 +18,8 @@ public class Event {
     private Long id;
     @Column(nullable = false)
     private String title;
-    @ManyToOne
-    @JoinColumn(name = "creator_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "creator_id", nullable = false)
     private User createdBy;
     private String description;
     @Column(nullable = false)
@@ -42,7 +42,7 @@ public class Event {
 
     }
 
-    public Event(String title, String description, String location, Integer maxParticipants, OffsetDateTime startTime, OffsetDateTime endTime, OffsetDateTime registrationStart, OffsetDateTime registrationEnd) {
+    public Event(String title, String description, String location, Integer maxParticipants, OffsetDateTime startTime, OffsetDateTime endTime, OffsetDateTime registrationStart, OffsetDateTime registrationEnd, User createdBy) {
         setTitle(title);
         setDescription(description);
         setLocation(location);
@@ -51,6 +51,7 @@ public class Event {
         setEndTime(endTime);
         setRegistrationStart(registrationStart);
         setRegistrationEnd(registrationEnd);
+        setCreatedBy(createdBy);
     }
 
 
