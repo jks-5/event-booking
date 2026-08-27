@@ -58,7 +58,7 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint))
                 .authorizeHttpRequests(
                         (auth) -> auth
-                                .requestMatchers(HttpMethod.GET, "/events").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/events/**").permitAll()
                                 .requestMatchers("/auth/**").permitAll()
                                 .anyRequest().authenticated()
                 )
