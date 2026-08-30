@@ -3,11 +3,14 @@ package com.example.eventbooking.service;
 import com.example.eventbooking.dto.CreateEventRequest;
 import com.example.eventbooking.dto.EventResponse;
 import com.example.eventbooking.dto.UpdateEventRequest;
+import com.example.eventbooking.dto.UserResponse;
 import com.example.eventbooking.exception.EventNotFoundException;
 import com.example.eventbooking.exception.UserNotFoundException;
+import com.example.eventbooking.model.Booking;
 import com.example.eventbooking.model.CustomUserDetails;
 import com.example.eventbooking.model.Event;
 import com.example.eventbooking.model.User;
+import com.example.eventbooking.repository.BookingRepository;
 import com.example.eventbooking.repository.EventRepository;
 import com.example.eventbooking.repository.UserRepository;
 import org.springframework.security.access.AccessDeniedException;
@@ -23,10 +26,12 @@ import java.util.Optional;
 public class EventService {
     private final EventRepository repository;
     private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
 
-    EventService(EventRepository repository, UserRepository userRepository) {
+    EventService(EventRepository repository, UserRepository userRepository, BookingRepository bookingRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
+        this.bookingRepository = bookingRepository;
     }
 
     public List<EventResponse> getAllEvents() {
@@ -78,6 +83,12 @@ public class EventService {
         Event event = validateOwner(repository.findById(id).orElseThrow(EventNotFoundException::new));
 
         repository.delete(event);
+    }
+
+    public List<UserResponse> getParticipants(Long id) {
+        validateOwner(repository.findById(id).orElseThrow(EventNotFoundException::new));
+
+        return bookingRepository.findByEventIdAndStatus(id, Booking.Status.CONFIRMED).stream().map(booking -> new UserResponse(booking.getUser())).toList();
     }
 
     private Event validateOwner(Event event) {
