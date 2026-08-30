@@ -10,7 +10,6 @@ import com.example.eventbooking.model.Event;
 import com.example.eventbooking.model.User;
 import com.example.eventbooking.repository.EventRepository;
 import com.example.eventbooking.repository.UserRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -60,7 +59,7 @@ public class EventService {
 
     @Transactional
     public EventResponse updateEvent(Long id, UpdateEventRequest request) {
-        Event event = verifyOwner(repository.findById(id).orElseThrow(EventNotFoundException::new));
+        Event event = validateOwner(repository.findById(id).orElseThrow(EventNotFoundException::new));
 
         Optional.ofNullable(request.getTitle()).ifPresent(event::setTitle);
         Optional.ofNullable(request.getDescription()).ifPresent(event::setDescription);
@@ -76,12 +75,12 @@ public class EventService {
 
     @Transactional
     public void deleteEvent(Long id) {
-        Event event = verifyOwner(repository.findById(id).orElseThrow(EventNotFoundException::new));
+        Event event = validateOwner(repository.findById(id).orElseThrow(EventNotFoundException::new));
 
         repository.delete(event);
     }
 
-    public Event verifyOwner(Event event) {
+    private Event validateOwner(Event event) {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (Objects.equals(userDetails.getId(), event.getCreatedBy().getId()) || userDetails.getRole() == User.Role.ADMIN) {
             return event;

@@ -6,6 +6,7 @@ import com.example.eventbooking.dto.UpdateEventRequest;
 import com.example.eventbooking.model.CustomUserDetails;
 import com.example.eventbooking.service.EventService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,6 +30,7 @@ public class EventController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
+    @ResponseStatus(HttpStatus.CREATED)
     public EventResponse createEvent(@Valid @RequestBody CreateEventRequest request, @AuthenticationPrincipal CustomUserDetails userDetails) {
         return service.createEvent(request, userDetails.getId());
     }

@@ -6,19 +6,19 @@ import java.time.OffsetDateTime;
 
 public class EventResponse {
 
-    String title;
-    User createdBy;
-    String description;
-    String location;
-    Integer maxParticipants;
-    OffsetDateTime startTime;
-    OffsetDateTime endTime;
-    OffsetDateTime registrationStart;
-    OffsetDateTime registrationEnd;
+    private String title;
+    private Long createdBy;
+    private String description;
+    private String location;
+    private Integer maxParticipants;
+    private OffsetDateTime startTime;
+    private OffsetDateTime endTime;
+    private OffsetDateTime registrationStart;
+    private OffsetDateTime registrationEnd;
 
     public EventResponse(Event event) {
         this.title = event.getTitle();
-        this.createdBy = event.getCreatedBy();
+        this.createdBy = event.getCreatedBy().getId();
         this.description = event.getDescription();
         this.location = event.getLocation();
         this.maxParticipants = event.getMaxParticipants();
@@ -33,7 +33,7 @@ public class EventResponse {
     }
 
     public Long getCreatedBy() {
-        return createdBy.getId();
+        return createdBy;
     }
 
     public String getDescription() {
