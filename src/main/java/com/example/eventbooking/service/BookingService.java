@@ -1,6 +1,8 @@
 package com.example.eventbooking.service;
 
 import com.example.eventbooking.dto.BookingResponse;
+import com.example.eventbooking.dto.EventResponse;
+import com.example.eventbooking.dto.MyBookingsResponse;
 import com.example.eventbooking.exception.*;
 import com.example.eventbooking.model.Booking;
 import com.example.eventbooking.model.Event;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Service
 public class BookingService {
@@ -63,6 +66,13 @@ public class BookingService {
         booking.setStatus(Booking.Status.CANCELLED);
 
         return new BookingResponse(repository.save(booking));
+    }
+
+    public List<MyBookingsResponse> getMyBookings(Long userId) {
+        return repository.findByUserId(userId)
+                .stream()
+                .map(booking -> new MyBookingsResponse(booking, new EventResponse(booking.getEvent())))
+                .toList();
     }
 
     private void checkEventCapacity(Event event) {
