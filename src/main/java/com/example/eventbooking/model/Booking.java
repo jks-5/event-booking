@@ -1,7 +1,6 @@
 package com.example.eventbooking.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
 import java.time.OffsetDateTime;
 
@@ -16,21 +15,26 @@ public class Booking {
     private Long id;
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    @NotNull
     private User user;
     @ManyToOne(optional = false)
     @JoinColumn(name = "event_id", nullable = false)
-    @NotNull
     private Event event;
-    @NotNull
+    @Column(nullable = false)
     private OffsetDateTime registeredAt;
     @Enumerated(EnumType.STRING)
-    @NotNull
+    @Column(nullable = false)
     private Status status;
 
 
     protected Booking() {
 
+    }
+
+    public Booking(User user, Event event) {
+        setUser(user);
+        setEvent(event);
+        setRegisteredAt(OffsetDateTime.now());
+        setStatus(Status.CONFIRMED);
     }
 
     public enum Status {CONFIRMED, CANCELLED}

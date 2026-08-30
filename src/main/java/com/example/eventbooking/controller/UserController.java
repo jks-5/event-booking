@@ -3,6 +3,7 @@ package com.example.eventbooking.controller;
 import com.example.eventbooking.dto.ChangeRoleRequest;
 import com.example.eventbooking.dto.UserResponse;
 import com.example.eventbooking.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class UserController {
 
     @PatchMapping("/{id}/role")
     @PreAuthorize("hasRole('ADMIN')")
-    public UserResponse changeRole(@PathVariable Long id, @RequestBody ChangeRoleRequest request) {
+    public UserResponse changeRole(@PathVariable Long id,@Valid @RequestBody ChangeRoleRequest request) {
         return service.changeRole(id, request);
     }
 }

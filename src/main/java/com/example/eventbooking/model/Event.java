@@ -1,9 +1,6 @@
 package com.example.eventbooking.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -34,6 +31,8 @@ public class Event {
     private OffsetDateTime registrationStart;
     @Column(nullable = false)
     private OffsetDateTime registrationEnd;
+    @Version
+    private int version;
 
     @OneToMany(mappedBy = "event")
     private List<Booking> eventBookings = new ArrayList<>();

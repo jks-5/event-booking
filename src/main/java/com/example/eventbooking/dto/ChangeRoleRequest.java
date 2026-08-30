@@ -1,7 +1,10 @@
 package com.example.eventbooking.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public class ChangeRoleRequest {
 
+    @NotNull
     private ChangedRole role;
 
     public ChangeRoleRequest() {
