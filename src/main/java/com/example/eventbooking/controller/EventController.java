@@ -3,6 +3,7 @@ package com.example.eventbooking.controller;
 import com.example.eventbooking.dto.CreateEventRequest;
 import com.example.eventbooking.dto.EventResponse;
 import com.example.eventbooking.dto.UpdateEventRequest;
+import com.example.eventbooking.dto.UserResponse;
 import com.example.eventbooking.model.CustomUserDetails;
 import com.example.eventbooking.service.EventService;
 import jakarta.validation.Valid;
@@ -52,5 +53,11 @@ public class EventController {
         service.deleteEvent(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/participants")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
+    public List<UserResponse> getParticipants(@PathVariable Long id) {
+        return service.getParticipants(id);
     }
 }
