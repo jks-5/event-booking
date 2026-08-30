@@ -5,20 +5,20 @@ import com.example.eventbooking.model.Booking;
 import java.time.OffsetDateTime;
 
 public class MyBookingsResponse {
-    private Long id;
+    private Long bookingId;
     private Booking.Status status;
     private OffsetDateTime registeredAt;
     private EventResponse event;
 
     public MyBookingsResponse(Booking booking, EventResponse eventResponse) {
-        this.id = booking.getId();
+        this.bookingId = booking.getId();
         this.status = booking.getStatus();
         this.registeredAt = booking.getRegisteredAt();
         this.event = eventResponse;
     }
 
-    public Long getId() {
-        return id;
+    public Long getBookingId() {
+        return bookingId;
     }
 
     public Booking.Status getStatus() {

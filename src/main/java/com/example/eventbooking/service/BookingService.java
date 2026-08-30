@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -71,6 +72,7 @@ public class BookingService {
     public List<MyBookingsResponse> getMyBookings(Long userId) {
         return repository.findByUserId(userId)
                 .stream()
+                .sorted(Comparator.comparing(Booking::getRegisteredAt).reversed())
                 .map(booking -> new MyBookingsResponse(booking, new EventResponse(booking.getEvent())))
                 .toList();
     }
