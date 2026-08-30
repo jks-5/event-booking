@@ -1,11 +1,14 @@
 package com.example.eventbooking.controller;
 
 import com.example.eventbooking.dto.BookingResponse;
+import com.example.eventbooking.dto.MyBookingsResponse;
 import com.example.eventbooking.model.CustomUserDetails;
 import com.example.eventbooking.service.BookingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class BookingController {
@@ -25,5 +28,10 @@ public class BookingController {
     @PatchMapping("/events/{id}/booking")
     public BookingResponse cancelBooking(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
         return service.cancelBooking(id, userDetails.getId());
+    }
+
+    @GetMapping("/users/me/bookings")
+    public List<MyBookingsResponse> getMyBookings(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return service.getMyBookings(userDetails.getId());
     }
 }
