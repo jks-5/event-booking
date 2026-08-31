@@ -5,6 +5,7 @@ import com.example.eventbooking.dto.EventResponse;
 import com.example.eventbooking.dto.UpdateEventRequest;
 import com.example.eventbooking.dto.UserResponse;
 import com.example.eventbooking.exception.EventNotFoundException;
+import com.example.eventbooking.exception.InvalidEventScheduleException;
 import com.example.eventbooking.exception.UserNotFoundException;
 import com.example.eventbooking.model.Booking;
 import com.example.eventbooking.model.CustomUserDetails;
@@ -18,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,6 +42,13 @@ public class EventService {
     public EventResponse createEvent(CreateEventRequest request, Long id) {
 
         User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+
+        validateSchedule(
+                request.getRegistrationStart(),
+                request.getRegistrationEnd(),
+                request.getStartTime(),
+                request.getEndTime()
+        );
 
         Event event = new Event(
                 request.getTitle(),
@@ -66,14 +75,30 @@ public class EventService {
     public EventResponse updateEvent(Long id, UpdateEventRequest request) {
         Event event = validateOwner(repository.findById(id).orElseThrow(EventNotFoundException::new));
 
-        Optional.ofNullable(request.getTitle()).ifPresent(event::setTitle);
-        Optional.ofNullable(request.getDescription()).ifPresent(event::setDescription);
-        Optional.ofNullable(request.getLocation()).ifPresent(event::setLocation);
-        Optional.ofNullable(request.getMaxParticipants()).ifPresent(event::setMaxParticipants);
-        Optional.ofNullable(request.getStartTime()).ifPresent(event::setStartTime);
-        Optional.ofNullable(request.getEndTime()).ifPresent(event::setEndTime);
-        Optional.ofNullable(request.getRegistrationStart()).ifPresent(event::setRegistrationStart);
-        Optional.ofNullable(request.getRegistrationEnd()).ifPresent(event::setRegistrationEnd);
+        String title = getNewOrCurrentValue(request.getTitle(), event.getTitle());
+        String description = getNewOrCurrentValue(request.getDescription(), event.getDescription());
+        String location = getNewOrCurrentValue(request.getLocation(), event.getLocation());
+        Integer maxParticipants = getNewOrCurrentValue(request.getMaxParticipants(), event.getMaxParticipants());
+        OffsetDateTime startTime = getNewOrCurrentValue(request.getStartTime(), event.getStartTime());
+        OffsetDateTime endTime = getNewOrCurrentValue(request.getEndTime(), event.getEndTime());
+        OffsetDateTime registrationStart = getNewOrCurrentValue(request.getRegistrationStart(), event.getRegistrationStart());
+        OffsetDateTime registrationEnd = getNewOrCurrentValue(request.getRegistrationEnd(), event.getRegistrationEnd());
+
+        validateSchedule(
+                registrationStart,
+                registrationEnd,
+                startTime,
+                endTime
+        );
+
+        event.setTitle(title);
+        event.setDescription(description);
+        event.setLocation(location);
+        event.setMaxParticipants(maxParticipants);
+        event.setStartTime(startTime);
+        event.setEndTime(endTime);
+        event.setRegistrationStart(registrationStart);
+        event.setRegistrationEnd(registrationEnd);
 
         return new EventResponse(repository.save(event));
     }
@@ -97,5 +122,19 @@ public class EventService {
             return event;
         }
         throw new AccessDeniedException("You are not allowed to access this resource");
+    }
+
+    private void validateSchedule(OffsetDateTime registrationStart, OffsetDateTime registrationEnd, OffsetDateTime startTime, OffsetDateTime endTime) {
+        boolean validSchedule =
+                registrationStart.isBefore(registrationEnd)
+                && !(registrationEnd.isAfter(startTime))
+                && startTime.isBefore(endTime);
+        if (!validSchedule) {
+            throw new InvalidEventScheduleException();
+        }
+    }
+
+    private <T> T getNewOrCurrentValue(T newValue, T currentValue) {
+        return Optional.ofNullable(newValue).orElse(currentValue);
     }
 }

@@ -90,7 +90,7 @@ public class Event {
         this.location = location;
     }
 
-    public int getMaxParticipants() {
+    public Integer getMaxParticipants() {
         return maxParticipants;
     }
 

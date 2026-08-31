@@ -1,6 +1,7 @@
 package com.example.eventbooking.dto;
 
 import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Positive;
 
 import java.time.OffsetDateTime;
@@ -14,8 +15,11 @@ public class UpdateEventRequest {
     private Integer maxParticipants;
     @Future
     private OffsetDateTime startTime;
+    @Future
     private OffsetDateTime endTime;
+    @FutureOrPresent
     private OffsetDateTime registrationStart;
+    @FutureOrPresent
     private OffsetDateTime registrationEnd;
 
     UpdateEventRequest() {
