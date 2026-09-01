@@ -3,6 +3,7 @@ package com.example.eventbooking.dto;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.time.OffsetDateTime;
 
@@ -13,6 +14,8 @@ public class UpdateEventRequest {
     private String location;
     @Positive
     private Integer maxParticipants;
+    @PositiveOrZero
+    private Integer waitlistSpots;
     @Future
     private OffsetDateTime startTime;
     @Future
@@ -87,5 +90,13 @@ public class UpdateEventRequest {
 
     public void setRegistrationEnd(OffsetDateTime registrationEnd) {
         this.registrationEnd = registrationEnd;
+    }
+
+    public Integer getWaitlistSpots() {
+        return waitlistSpots;
+    }
+
+    public void setWaitlistSpots(Integer waitlistSpots) {
+        this.waitlistSpots = waitlistSpots;
     }
 }

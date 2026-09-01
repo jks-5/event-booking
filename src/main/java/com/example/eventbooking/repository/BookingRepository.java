@@ -11,4 +11,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     int countByEventIdAndStatus(Long eventId, Booking.Status status);
     List<Booking> findByEventIdAndStatus(Long id, Booking.Status status);
     List<Booking> findByUserId(Long id);
+    Optional<Booking> findFirstByEventIdAndStatusOrderByRegisteredAtAsc(Long eventId, Booking.Status status);
 }

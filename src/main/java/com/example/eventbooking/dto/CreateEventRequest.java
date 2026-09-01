@@ -15,6 +15,9 @@ public class CreateEventRequest {
     @Positive
     private Integer maxParticipants;
     @NotNull
+    @PositiveOrZero
+    private Integer waitlistSpots;
+    @NotNull
     @Future
     private OffsetDateTime startTime;
     @NotNull
@@ -92,5 +95,13 @@ public class CreateEventRequest {
 
     public void setRegistrationEnd(OffsetDateTime registrationEnd) {
         this.registrationEnd = registrationEnd;
+    }
+
+    public Integer getWaitlistSpots() {
+        return waitlistSpots;
+    }
+
+    public void setWaitlistSpots(Integer waitlistSpots) {
+        this.waitlistSpots = waitlistSpots;
     }
 }
