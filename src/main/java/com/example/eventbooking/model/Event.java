@@ -24,6 +24,8 @@ public class Event {
     @Column(nullable = false)
     private Integer maxParticipants;
     @Column(nullable = false)
+    private Integer waitlistSpots;
+    @Column(nullable = false)
     private OffsetDateTime startTime;
     @Column(nullable = false)
     private OffsetDateTime endTime;
@@ -32,7 +34,7 @@ public class Event {
     @Column(nullable = false)
     private OffsetDateTime registrationEnd;
     @Version
-    private int version;
+    private Long version;
 
     @OneToMany(mappedBy = "event")
     private List<Booking> eventBookings = new ArrayList<>();
@@ -41,11 +43,12 @@ public class Event {
 
     }
 
-    public Event(String title, String description, String location, Integer maxParticipants, OffsetDateTime startTime, OffsetDateTime endTime, OffsetDateTime registrationStart, OffsetDateTime registrationEnd, User createdBy) {
+    public Event(String title, String description, String location, Integer maxParticipants, Integer waitlistSpots, OffsetDateTime startTime, OffsetDateTime endTime, OffsetDateTime registrationStart, OffsetDateTime registrationEnd, User createdBy) {
         setTitle(title);
         setDescription(description);
         setLocation(location);
         setMaxParticipants(maxParticipants);
+        setWaitlistSpots(waitlistSpots);
         setStartTime(startTime);
         setEndTime(endTime);
         setRegistrationStart(registrationStart);
@@ -136,5 +139,13 @@ public class Event {
 
     public void setEventBookings(List<Booking> eventBookings) {
         this.eventBookings = eventBookings;
+    }
+
+    public Integer getWaitlistSpots() {
+        return waitlistSpots;
+    }
+
+    public void setWaitlistSpots(Integer waitlistSpots) {
+        this.waitlistSpots = waitlistSpots;
     }
 }

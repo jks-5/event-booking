@@ -9,5 +9,5 @@ import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
     @Lock(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
-    Optional<Event> findWithVersionIncrementById(Long id);
+    Optional<Event> findWithOptimisticLockById(Long id);
 }

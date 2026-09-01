@@ -55,6 +55,7 @@ public class EventService {
                 request.getDescription(),
                 request.getLocation(),
                 request.getMaxParticipants(),
+                request.getWaitlistSpots(),
                 request.getStartTime(),
                 request.getEndTime(),
                 request.getRegistrationStart(),
@@ -79,6 +80,7 @@ public class EventService {
         String description = getNewOrCurrentValue(request.getDescription(), event.getDescription());
         String location = getNewOrCurrentValue(request.getLocation(), event.getLocation());
         Integer maxParticipants = getNewOrCurrentValue(request.getMaxParticipants(), event.getMaxParticipants());
+        Integer waitlistSpots = getNewOrCurrentValue(request.getWaitlistSpots(), event.getWaitlistSpots());
         OffsetDateTime startTime = getNewOrCurrentValue(request.getStartTime(), event.getStartTime());
         OffsetDateTime endTime = getNewOrCurrentValue(request.getEndTime(), event.getEndTime());
         OffsetDateTime registrationStart = getNewOrCurrentValue(request.getRegistrationStart(), event.getRegistrationStart());
@@ -95,6 +97,7 @@ public class EventService {
         event.setDescription(description);
         event.setLocation(location);
         event.setMaxParticipants(maxParticipants);
+        event.setWaitlistSpots(waitlistSpots);
         event.setStartTime(startTime);
         event.setEndTime(endTime);
         event.setRegistrationStart(registrationStart);

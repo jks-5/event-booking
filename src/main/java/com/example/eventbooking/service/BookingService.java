@@ -42,13 +42,13 @@ public class BookingService {
             backoff = @Backoff(delay = 100)
     )
     public BookingResponse bookEvent(Long eventId, Long userId) {
-        Event event = eventRepository.findWithVersionIncrementById(eventId).orElseThrow(EventNotFoundException::new);
+        Event event = eventRepository.findWithOptimisticLockById(eventId).orElseThrow(EventNotFoundException::new);
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
-        checkEventCapacity(event);
         validateRegistrationWindow(event);
+        Booking.Status status = checkBookingStatus(event);
 
-        Booking booking = new Booking(user, event);
+        Booking booking = new Booking(user, event, status);
 
         repository.save(booking);
         entityManager.flush();
@@ -57,14 +57,29 @@ public class BookingService {
     }
 
     @Transactional
+    @Retryable(
+            retryFor = {ObjectOptimisticLockingFailureException.class},
+            backoff = @Backoff(delay = 100)
+    )
     public BookingResponse cancelBooking(Long eventId, Long userId) {
+
+        // optimistic locking on the event
+        eventRepository.findWithOptimisticLockById(eventId).orElseThrow(EventNotFoundException::new);
+
         Booking booking = repository.findByEventIdAndUserId(eventId, userId).orElseThrow(BookingNotFoundException::new);
 
-        if (booking.getStatus() == Booking.Status.CANCELLED) {
+        Booking.Status previousStatus = booking.getStatus();
+
+        if (previousStatus == Booking.Status.CANCELLED) {
             throw new BookingAlreadyCancelledException();
         }
 
         booking.setStatus(Booking.Status.CANCELLED);
+
+        if(previousStatus == Booking.Status.CONFIRMED) {
+            repository.findFirstByEventIdAndStatusOrderByRegisteredAtAsc(eventId, Booking.Status.WAITLISTED)
+                    .ifPresent(waitlistedBooking -> waitlistedBooking.setStatus(Booking.Status.CONFIRMED));
+        }
 
         return new BookingResponse(repository.save(booking));
     }
@@ -77,11 +92,18 @@ public class BookingService {
                 .toList();
     }
 
-    private void checkEventCapacity(Event event) {
+    private Booking.Status checkBookingStatus(Event event) {
         int numberOfParticipants = repository.countByEventIdAndStatus(event.getId(), Booking.Status.CONFIRMED);
-        if (numberOfParticipants >= event.getMaxParticipants()) {
+        if (numberOfParticipants < event.getMaxParticipants()) {
+            return Booking.Status.CONFIRMED;
+        }
+
+        int waitlistedParticipants = repository.countByEventIdAndStatus(event.getId(), Booking.Status.WAITLISTED);
+        if (waitlistedParticipants >= event.getWaitlistSpots()) {
             throw new MaxCapacityReachedException();
         }
+
+        return Booking.Status.WAITLISTED;
     }
 
     private void validateRegistrationWindow(Event event) {

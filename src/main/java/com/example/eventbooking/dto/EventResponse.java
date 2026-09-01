@@ -11,6 +11,7 @@ public class EventResponse {
     private String description;
     private String location;
     private Integer maxParticipants;
+    private Integer waitlistSpots;
     private OffsetDateTime startTime;
     private OffsetDateTime endTime;
     private OffsetDateTime registrationStart;
@@ -22,6 +23,7 @@ public class EventResponse {
         this.description = event.getDescription();
         this.location = event.getLocation();
         this.maxParticipants = event.getMaxParticipants();
+        this.waitlistSpots = event.getWaitlistSpots();
         this.startTime = event.getStartTime();
         this.endTime = event.getEndTime();
         this.registrationStart = event.getRegistrationStart();
@@ -46,6 +48,10 @@ public class EventResponse {
 
     public Integer getMaxParticipants() {
         return maxParticipants;
+    }
+
+    public Integer getWaitlistSpots() {
+        return waitlistSpots;
     }
 
     public OffsetDateTime getStartTime() {

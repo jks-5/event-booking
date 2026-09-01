@@ -30,14 +30,14 @@ public class Booking {
 
     }
 
-    public Booking(User user, Event event) {
+    public Booking(User user, Event event, Status status) {
         setUser(user);
         setEvent(event);
         setRegisteredAt(OffsetDateTime.now());
-        setStatus(Status.CONFIRMED);
+        setStatus(status);
     }
 
-    public enum Status {CONFIRMED, CANCELLED}
+    public enum Status {CONFIRMED, CANCELLED, WAITLISTED}
 
     public Long getId() {
         return id;
