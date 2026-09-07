@@ -11,15 +11,16 @@ import com.example.eventbooking.repository.BookingRepository;
 import com.example.eventbooking.repository.EventRepository;
 import com.example.eventbooking.repository.UserRepository;
 import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.OffsetDateTime;
-import java.util.Comparator;
-import java.util.List;
 
 @Service
 public class BookingService {
@@ -84,12 +85,10 @@ public class BookingService {
         return new BookingResponse(repository.save(booking));
     }
 
-    public List<MyBookingsResponse> getMyBookings(Long userId) {
-        return repository.findByUserId(userId)
-                .stream()
-                .sorted(Comparator.comparing(Booking::getRegisteredAt).reversed())
-                .map(booking -> new MyBookingsResponse(booking, new EventResponse(booking.getEvent())))
-                .toList();
+    public Page<MyBookingsResponse> getMyBookings(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("registeredAt").descending());
+
+        return repository.findByUserId(userId, pageable).map(booking -> new MyBookingsResponse(booking, new EventResponse(booking.getEvent())));
     }
 
     private Booking.Status checkBookingStatus(Event event) {
