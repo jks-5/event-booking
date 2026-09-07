@@ -7,16 +7,20 @@ import com.example.eventbooking.dto.UserResponse;
 import com.example.eventbooking.model.CustomUserDetails;
 import com.example.eventbooking.service.EventService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/events")
+@Validated
 public class EventController {
     private final EventService service;
 
@@ -25,8 +29,9 @@ public class EventController {
     }
 
     @GetMapping
-    public List<EventResponse> getAllEvents() {
-        return service.getAllEvents();
+    public Page<EventResponse> getAllEvents(@RequestParam(defaultValue = "0") @PositiveOrZero int page,
+                                            @RequestParam(defaultValue = "3") @Positive @Max(25) int size) {
+        return service.getAllEvents(page, size);
     }
 
     @PostMapping
@@ -57,7 +62,9 @@ public class EventController {
 
     @GetMapping("/{id}/participants")
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
-    public List<UserResponse> getParticipants(@PathVariable Long id) {
-        return service.getParticipants(id);
+    public Page<UserResponse> getParticipants(@PathVariable Long id,
+                                              @RequestParam(defaultValue = "0") @PositiveOrZero int page,
+                                              @RequestParam(defaultValue = "5") @Positive @Max(25) int size) {
+        return service.getParticipants(id, page, size);
     }
 }

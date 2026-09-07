@@ -4,6 +4,7 @@ import com.example.eventbooking.exception.CustomAuthenticationEntryPoint;
 import com.example.eventbooking.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.HttpMethod;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,9 +20,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO;
+
 @Configuration
 @EnableMethodSecurity
 @EnableRetry
+@EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)
 public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;

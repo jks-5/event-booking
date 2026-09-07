@@ -14,13 +14,15 @@ import com.example.eventbooking.model.User;
 import com.example.eventbooking.repository.BookingRepository;
 import com.example.eventbooking.repository.EventRepository;
 import com.example.eventbooking.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -36,8 +38,9 @@ public class EventService {
         this.bookingRepository = bookingRepository;
     }
 
-    public List<EventResponse> getAllEvents() {
-        return repository.findAll().stream().map(EventResponse::new).toList();
+    public Page<EventResponse> getAllEvents(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("startTime").descending());
+        return repository.findAll(pageable).map(EventResponse::new);
     }
     public EventResponse createEvent(CreateEventRequest request, Long id) {
 
@@ -113,10 +116,12 @@ public class EventService {
         repository.delete(event);
     }
 
-    public List<UserResponse> getParticipants(Long id) {
+    public Page<UserResponse> getParticipants(Long id, int page, int size) {
         validateOwner(repository.findById(id).orElseThrow(EventNotFoundException::new));
 
-        return bookingRepository.findByEventIdAndStatus(id, Booking.Status.CONFIRMED).stream().map(booking -> new UserResponse(booking.getUser())).toList();
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+
+        return bookingRepository.findByEventIdAndStatus(id, Booking.Status.CONFIRMED, pageable).map(booking -> new UserResponse(booking.getUser()));
     }
 
     private Event validateOwner(Event event) {
