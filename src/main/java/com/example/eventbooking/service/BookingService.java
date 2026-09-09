@@ -2,6 +2,7 @@ package com.example.eventbooking.service;
 
 import com.example.eventbooking.dto.BookingResponse;
 import com.example.eventbooking.dto.EventResponse;
+import com.example.eventbooking.dto.MyBookingsFilter;
 import com.example.eventbooking.dto.MyBookingsResponse;
 import com.example.eventbooking.exception.*;
 import com.example.eventbooking.model.Booking;
@@ -10,11 +11,11 @@ import com.example.eventbooking.model.User;
 import com.example.eventbooking.repository.BookingRepository;
 import com.example.eventbooking.repository.EventRepository;
 import com.example.eventbooking.repository.UserRepository;
+import com.example.eventbooking.repository.specification.BookingSpecifications;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -85,10 +86,14 @@ public class BookingService {
         return new BookingResponse(repository.save(booking));
     }
 
-    public Page<MyBookingsResponse> getMyBookings(Long userId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("registeredAt").descending());
+    public Page<MyBookingsResponse> getMyBookings(Long userId, Pageable pageable, MyBookingsFilter filter) {
+        Specification<Booking> specification = Specification
+                .where(BookingSpecifications.hasUserId(userId))
+                .and(BookingSpecifications.hasEventTitle(filter.getTitle()))
+                .and(BookingSpecifications.hasEventLocation(filter.getLocation()))
+                .and(BookingSpecifications.hasStatus(filter.getStatus()));
 
-        return repository.findByUserId(userId, pageable).map(booking -> new MyBookingsResponse(booking, new EventResponse(booking.getEvent())));
+        return repository.findAll(specification, pageable).map(booking -> new MyBookingsResponse(booking, new EventResponse(booking.getEvent())));
     }
 
     private Booking.Status checkBookingStatus(Event event) {

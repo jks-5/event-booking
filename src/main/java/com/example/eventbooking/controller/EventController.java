@@ -1,16 +1,13 @@
 package com.example.eventbooking.controller;
 
-import com.example.eventbooking.dto.CreateEventRequest;
-import com.example.eventbooking.dto.EventResponse;
-import com.example.eventbooking.dto.UpdateEventRequest;
-import com.example.eventbooking.dto.UserResponse;
+import com.example.eventbooking.dto.*;
 import com.example.eventbooking.model.CustomUserDetails;
 import com.example.eventbooking.service.EventService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,9 +26,9 @@ public class EventController {
     }
 
     @GetMapping
-    public Page<EventResponse> getAllEvents(@RequestParam(defaultValue = "0") @PositiveOrZero int page,
-                                            @RequestParam(defaultValue = "3") @Positive @Max(25) int size) {
-        return service.getAllEvents(page, size);
+    public Page<EventResponse> getAllEvents(@PageableDefault(sort = "startTime", direction = Sort.Direction.DESC) Pageable pageable,
+                                            @ModelAttribute GetAllEventsFilter filter) {
+        return service.getAllEvents(pageable, filter);
     }
 
     @PostMapping
@@ -63,8 +60,8 @@ public class EventController {
     @GetMapping("/{id}/participants")
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
     public Page<UserResponse> getParticipants(@PathVariable Long id,
-                                              @RequestParam(defaultValue = "0") @PositiveOrZero int page,
-                                              @RequestParam(defaultValue = "5") @Positive @Max(25) int size) {
-        return service.getParticipants(id, page, size);
+                                              @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                              @ModelAttribute GetParticipantsFilter filter) {
+        return service.getParticipants(id, pageable, filter);
     }
 }
