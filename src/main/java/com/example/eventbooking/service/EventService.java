@@ -1,9 +1,6 @@
 package com.example.eventbooking.service;
 
-import com.example.eventbooking.dto.CreateEventRequest;
-import com.example.eventbooking.dto.EventResponse;
-import com.example.eventbooking.dto.UpdateEventRequest;
-import com.example.eventbooking.dto.UserResponse;
+import com.example.eventbooking.dto.*;
 import com.example.eventbooking.exception.EventNotFoundException;
 import com.example.eventbooking.exception.InvalidEventScheduleException;
 import com.example.eventbooking.exception.UserNotFoundException;
@@ -14,10 +11,11 @@ import com.example.eventbooking.model.User;
 import com.example.eventbooking.repository.BookingRepository;
 import com.example.eventbooking.repository.EventRepository;
 import com.example.eventbooking.repository.UserRepository;
+import com.example.eventbooking.repository.specification.EventSpecifications;
+import com.example.eventbooking.repository.specification.BookingSpecifications;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -38,9 +36,11 @@ public class EventService {
         this.bookingRepository = bookingRepository;
     }
 
-    public Page<EventResponse> getAllEvents(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("startTime").descending());
-        return repository.findAll(pageable).map(EventResponse::new);
+    public Page<EventResponse> getAllEvents(Pageable pageable, GetAllEventsFilter filter) {
+        Specification<Event> specification = Specification
+                .where(EventSpecifications.hasTitle(filter.getTitle()))
+                .and(EventSpecifications.hasLocation(filter.getLocation()));
+        return repository.findAll(specification, pageable).map(EventResponse::new);
     }
     public EventResponse createEvent(CreateEventRequest request, Long id) {
 
@@ -116,12 +116,17 @@ public class EventService {
         repository.delete(event);
     }
 
-    public Page<UserResponse> getParticipants(Long id, int page, int size) {
+    public Page<UserResponse> getParticipants(Long id, Pageable pageable, GetParticipantsFilter filter) {
         validateOwner(repository.findById(id).orElseThrow(EventNotFoundException::new));
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        Specification<Booking> specification = Specification
+                .where(BookingSpecifications.hasEventId(id)
+                .and(BookingSpecifications.hasStatus(Booking.Status.CONFIRMED))
+                .and(BookingSpecifications.hasUserId(filter.getUserId()))
+                .and(BookingSpecifications.hasFirstName(filter.getFirstName()))
+                .and(BookingSpecifications.hasLastName(filter.getLastName())));
 
-        return bookingRepository.findByEventIdAndStatus(id, Booking.Status.CONFIRMED, pageable).map(booking -> new UserResponse(booking.getUser()));
+        return bookingRepository.findAll(specification, pageable).map(booking -> new UserResponse(booking.getUser()));
     }
 
     private Event validateOwner(Event event) {
