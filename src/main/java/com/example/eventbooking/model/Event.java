@@ -97,7 +97,7 @@ public class Event {
         return maxParticipants;
     }
 
-    public void setMaxParticipants(int maxParticipants) {
+    public void setMaxParticipants(Integer maxParticipants) {
         this.maxParticipants = maxParticipants;
     }
 

@@ -12,22 +12,22 @@ public class BookingSpecifications {
 
     public static Specification<Booking> hasFirstName(String firstName) {
         return ((root, query, criteriaBuilder) ->
-                firstName != null && !firstName.isBlank() ? criteriaBuilder.like(criteriaBuilder.lower(root.get("user").get("firstName")), "%" + firstName + "%") : null);
+                firstName != null && !firstName.isBlank() ? criteriaBuilder.like(criteriaBuilder.lower(root.get("user").get("firstName")), "%" + firstName.toLowerCase() + "%") : null);
     }
 
     public static Specification<Booking> hasLastName(String lastName) {
         return ((root, query, criteriaBuilder) ->
-                lastName != null && !lastName.isBlank() ? criteriaBuilder.like(criteriaBuilder.lower(root.get("user").get("lastName")), "%" + lastName + "%") : null);
+                lastName != null && !lastName.isBlank() ? criteriaBuilder.like(criteriaBuilder.lower(root.get("user").get("lastName")), "%" + lastName.toLowerCase() + "%") : null);
     }
 
     public static Specification<Booking> hasEventTitle(String eventTitle) {
         return ((root, query, criteriaBuilder) ->
-                eventTitle != null && !eventTitle.isBlank() ? criteriaBuilder.like(criteriaBuilder.lower(root.get("event").get("title")), "%" + eventTitle + "%") : null);
+                eventTitle != null && !eventTitle.isBlank() ? criteriaBuilder.like(criteriaBuilder.lower(root.get("event").get("title")), "%" + eventTitle.toLowerCase() + "%") : null);
     }
 
     public static Specification<Booking> hasEventLocation(String eventLocation) {
         return ((root, query, criteriaBuilder) ->
-                eventLocation != null && !eventLocation.isBlank() ? criteriaBuilder.like(criteriaBuilder.lower(root.get("event").get("location")), "%" + eventLocation + "%") : null);
+                eventLocation != null && !eventLocation.isBlank() ? criteriaBuilder.like(criteriaBuilder.lower(root.get("event").get("location")), "%" + eventLocation.toLowerCase() + "%") : null);
     }
 
     public static Specification<Booking> hasEventId(Long eventId) {
