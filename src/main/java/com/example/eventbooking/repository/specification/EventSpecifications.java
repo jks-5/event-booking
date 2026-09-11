@@ -7,11 +7,11 @@ public class EventSpecifications {
 
     public static Specification<Event> hasTitle(String title) {
         return ((root, query, criteriaBuilder) ->
-                title != null && !title.isBlank() ? criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + title + "%") : null);
+                title != null && !title.isBlank() ? criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + title.toLowerCase() + "%") : null);
     }
 
     public static Specification<Event> hasLocation(String location) {
         return ((root, query, criteriaBuilder) ->
-                location != null && !location.isBlank() ? criteriaBuilder.like(criteriaBuilder.lower(root.get("location")), "%" + location + "%") : null);
+                location != null && !location.isBlank() ? criteriaBuilder.like(criteriaBuilder.lower(root.get("location")), "%" + location.toLowerCase() + "%") : null);
     }
 }
