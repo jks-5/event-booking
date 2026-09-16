@@ -2,6 +2,7 @@ package com.example.eventbooking.service;
 
 import com.example.eventbooking.model.User;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,15 +32,17 @@ public class JwtService {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String extractEmail(String token) {
-        return extractAllClaims(token).getSubject();
-    }
-
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        String email = extractEmail(token);
-        boolean isTokenExpired = extractAllClaims(token).getExpiration().before(new Date());
+        try {
+            Claims claims = extractAllClaims(token);
+            String email = claims.getSubject();
+            boolean isTokenExpired = claims.getExpiration().before(new Date());
 
-        return email.equals(userDetails.getUsername()) && !isTokenExpired;
+            return email.equals(userDetails.getUsername()) && !isTokenExpired;
+        }
+        catch (ExpiredJwtException e) {
+            return false;
+        }
     }
 
     public Claims extractAllClaims(String token) {
