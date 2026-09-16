@@ -5,6 +5,7 @@ import com.example.eventbooking.dto.MyBookingsFilter;
 import com.example.eventbooking.dto.MyBookingsResponse;
 import com.example.eventbooking.model.CustomUserDetails;
 import com.example.eventbooking.service.BookingService;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -37,8 +38,8 @@ public class BookingController {
 
     @GetMapping("/users/me/bookings")
     public Page<MyBookingsResponse> getMyBookings(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                  @PageableDefault(sort = "registeredAt", direction = Sort.Direction.DESC) Pageable pageable,
-                                                  @ModelAttribute MyBookingsFilter filter) {
+                                                  @ParameterObject @PageableDefault(sort = "registeredAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                                  @ParameterObject MyBookingsFilter filter) {
         return service.getMyBookings(userDetails.getId(), pageable, filter);
     }
 }

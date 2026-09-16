@@ -68,6 +68,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/events").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/events/{id}").permitAll()
                                 .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider(passwordEncoder()))

@@ -4,6 +4,7 @@ import com.example.eventbooking.dto.*;
 import com.example.eventbooking.model.CustomUserDetails;
 import com.example.eventbooking.service.EventService;
 import jakarta.validation.Valid;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,8 +27,8 @@ public class EventController {
     }
 
     @GetMapping
-    public Page<EventResponse> getAllEvents(@PageableDefault(sort = "startTime", direction = Sort.Direction.DESC) Pageable pageable,
-                                            @ModelAttribute GetAllEventsFilter filter) {
+    public Page<EventResponse> getAllEvents(@ParameterObject @PageableDefault(sort = "startTime", direction = Sort.Direction.DESC) Pageable pageable,
+                                            @ParameterObject GetAllEventsFilter filter) {
         return service.getAllEvents(pageable, filter);
     }
 
@@ -60,8 +61,8 @@ public class EventController {
     @GetMapping("/{id}/participants")
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
     public Page<UserResponse> getParticipants(@PathVariable Long id,
-                                              @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                                              @ModelAttribute GetParticipantsFilter filter) {
+                                              @ParameterObject @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                              @ParameterObject GetParticipantsFilter filter) {
         return service.getParticipants(id, pageable, filter);
     }
 }
