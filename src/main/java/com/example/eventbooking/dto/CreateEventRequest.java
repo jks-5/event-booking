@@ -30,7 +30,7 @@ public class CreateEventRequest {
     @Future
     private OffsetDateTime registrationEnd;
 
-    CreateEventRequest() {
+    public CreateEventRequest() {
     }
 
     public String getTitle() {
