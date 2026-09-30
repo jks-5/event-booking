@@ -1,4 +1,4 @@
-# Event-/Terminbuchungssystem
+# Eventbuchungssystem
 
 Eine REST API zur Verwaltung von Events und Anmeldungen, entwickelt mit Spring Boot. Veranstalter können Events erstellen und verwalten, Teilnehmer können sich anmelden inklusive Kapazitätsprüfung, automatischer Warteliste und rollenbasierter Berechtigung.
 
@@ -76,7 +76,7 @@ Die vollständige und aktuelle Übersicht aller Endpunkte inklusive Request/Resp
 
 #### Umgebungsvariablen setzen
 
-Erstelle eine `.env`-Datei im Root-Verzeichnis des Projekts und trage dort deine Konfiguration ein.
+Erstelle eine `.env` Datei im Root-Verzeichnis des Projekts und trage dort deine Konfiguration ein.
 
 Die Anwendung erwartet folgende Umgebungsvariablen:
 
@@ -107,14 +107,14 @@ Windows:
 
 ```powershell
 $env:DB_PASSWORD="postgres-passwort"
-$env:SECRET_KEY="zufallsstring-für-jwt-signierung"
+$env:SECRET_KEY="jwt-secret-key"
 ```
 
 Linux/macOS:
 
 ```powershell
 export DB_PASSWORD="postgres-passwort"
-export SECRET_KEY="zufallsstring-für-jwt-signierung"
+export SECRET_KEY="jwt-secret-key"
 ```
 
 #### Anwendung starten
